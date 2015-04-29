@@ -105,3 +105,11 @@ STATIC_URL = '/static/'
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR,  'templates'),
 )
+
+BASE_URL = "http://localhost:8000"
+
+
+DJANGO_PAY_BASE_URL = BASE_URL
+DJANGO_PAY_PAYU_POS_ID = "145227"
+DJANGO_PAY_PAYU_POS_AUTHORIZATION_KEY = "13a980d4f851f3d9a1cfc792fb1f5e50"
+
