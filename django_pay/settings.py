@@ -56,7 +56,9 @@ ROOT_URLCONF = 'django_pay.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -102,12 +104,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR,  'templates'),
-)
-
 BASE_URL = "http://localhost:8000"
-
+BASE_URL = "https://django-pay-example.herokuapp.com"
 
 DJANGO_PAY_BASE_URL = BASE_URL
 DJANGO_PAY_PAYU_POS_ID = "145227"
