@@ -100,7 +100,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-BASE_URL = "http://localhost:8000"
+BASE_URL = os.environ.get("BASE_URL", "http://localhost:8000")
 
 DJANGO_PAY_BASE_URL = BASE_URL
 DJANGO_PAY_PAYU_POS_ID = "145227"
