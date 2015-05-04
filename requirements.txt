@@ -2,3 +2,5 @@ Django
 pytz
 requests
 six
+dj_database_url
+psycopg2
