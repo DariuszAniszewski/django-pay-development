@@ -3,30 +3,92 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"
+            type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.3/handlebars.min.js"
+            type="text/javascript"></script>
+
+    {% verbatim %}
+    <script id="some-template" type="text/x-handlebars-template">
+        <h3>OrderId: {{ order_id }}</h3>
+
+        <h3>PayU OrderId: {{ payu_id }}</h3>
+
+        <h3>Click <a href="{{ follow }}">here</a> to pay!</h3>
+    </script>
+    {% endverbatim %}
+
+    <script>
+        function getRequestBody() {
+            return JSON.stringify({
+                "user_id": $("#user_id").val(),
+                "product_id": $("#product_id").val(),
+                "quantity": $("#quantity").val()
+            });
+        }
+
+        function start_purchase() {
+            var url = "{% url "django_pay_payu_start" %}";
+            var body = getRequestBody();
+            $.ajax({
+                url: url,
+                type: 'post',
+                dataType: 'json',
+                data: body,
+                success: function (data) {
+                    console.log(data.order_id);
+                    console.log(data.payu_id);
+                    console.log(data.follow);
+                    var order_id = data.order_id;
+                    var payu_id = data.payu_id;
+                    var follow = data.follow;
+                    var source = $("#some-template").html();
+                    console.log(source);
+                    var template = Handlebars.compile(source);
+                    var html = template({
+                        order_id: order_id,
+                        payu_id: payu_id,
+                        follow: follow
+                    });
+                    $("#status").html(html);
+
+                }
+            });
+        }
+
+        $().ready(function () {
+            $("#submit").click(function () {
+                start_purchase();
+            });
+        });
+    </script>
 </head>
 <body>
 {% if logged %}
-    <form action="{% url "django_pay_payu_start_via_form" %}" method="POST">
-        {% csrf_token %}
-        <label for="user_id">User id:</label>
-        <input id="user_id" name="user_id" type="text" value="{{ user.pk }}"/>
-        <br/>
-        <br/>
-        <label for="quantity">Quantity id:</label>
-        <input id="quantity" name="quantity" type="number" value="1"/>
-        <br/>
-        <br/>
-        <label for="product_id">Product id:</label>
-        <select id="product_id" name="product_id">
-            {% for product in products %}
-                <option value="{{ product.pk }}">{{ product.name }}</option>
-            {% endfor %}
-        </select>
-        <br/>
-        <br/>
+    <label for="user_id">User id:</label>
+    <input id="user_id" name="user_id" type="text" value="{{ user.pk }}"/>
+    <br/>
+    <br/>
+    <label for="quantity">Quantity id:</label>
+    <input id="quantity" name="quantity" type="number" value="1"/>
+    <br/>
+    <br/>
+    <label for="product_id">Product id:</label>
+    <select id="product_id" name="product_id">
+        {% for product in products %}
+            <option value="{{ product.pk }}">{{ product.name }}</option>
+        {% endfor %}
+    </select>
+    <br/>
+    <br/>
 
-        <button type="submit">SUBMIT</button>
-    </form>
+
+    <button id="submit" type="submit">SUBMIT</button>
+
+    <div id="status">
+
+    </div>
 {% else %}
     Need to log in
 {% endif %}
