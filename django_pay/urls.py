@@ -7,6 +7,7 @@ urlpatterns = [
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^$', 'django_pay.example_views.index'),
+    url(r'^payment_completed$', 'django_pay.example_views.payment_completed', name='django_pay_complete'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^django_pay/', include('payments.urls')),
 ]
