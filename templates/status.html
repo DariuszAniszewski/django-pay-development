@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+    <script>
+        function checkStatus() {
+            var url = "{% url "django_pay_payu_status" payment_id %}";
+            $.getJSON(url, function (data) {
+                console.log(data);
+                $("#status").html(data.status);
+            });
+        }
+
+        $().ready(function () {
+            checkStatus();
+            setInterval(checkStatus, 3000);
+        });
+    </script>
+{% endblock %}
+{% block body %}
+    <h4>Payment {{ payment_id }}</h4>
+    <h3>Status: <span id="status"></span></h3>
+{% endblock %}

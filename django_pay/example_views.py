@@ -1,6 +1,5 @@
-from django.http.response import HttpResponse
 from django.shortcuts import render
-from payments.models import Product, PayuPayment
+from payments.models import Product
 
 __author__ = 'dariusz'
 
@@ -15,5 +14,7 @@ def index(request):
 
 def payment_completed(request):
     payment_id = request.session["payment_id"]
-    payment = PayuPayment.objects.get(pk=payment_id)
-    return HttpResponse(payment.status)
+    data = {
+        "payment_id": payment_id,
+    }
+    return render(request, "status.html", data)
