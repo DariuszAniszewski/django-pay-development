@@ -1,2 +1,3 @@
 [submodule "django-pay"]
+	path = django_pay
 	url = https://github.com/DariuszAniszewski/django-pay
