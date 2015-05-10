@@ -53,7 +53,7 @@ MIDDLEWARE_CLASSES = (
     'payments.middleware.DjangoPayExceptionsMiddleware',
 )
 
-ROOT_URLCONF = 'django_pay.urls'
+ROOT_URLCONF = 'django_pay_development.urls'
 
 TEMPLATES = [
     {
@@ -73,7 +73,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'django_pay.wsgi.application'
+WSGI_APPLICATION = 'django_pay_development.wsgi.application'
 
 
 # Database
