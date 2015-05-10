@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from payments.models import Product
+from django_pay.models import Product
 
 __author__ = 'dariusz'
 

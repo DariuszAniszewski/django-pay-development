@@ -38,7 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'payments',
+    'django_pay',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -50,7 +50,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'payments.middleware.DjangoPayExceptionsMiddleware',
+    'django_pay.middleware.DjangoPayExceptionsMiddleware',
 )
 
 ROOT_URLCONF = 'django_pay_development.urls'
