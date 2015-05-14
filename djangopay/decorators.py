@@ -24,7 +24,7 @@ def require_JSON(func):
 def require_AJAX(func):
     def wrap(request, *args, **kwargs):
         if not request.is_ajax():
-            return HttpResponseBadRequest()
+            return BadRequestJsonResponse({"error": ErrorMessages.NOT_AJAX_REQUEST})
         return func(request, *args, **kwargs)
 
     return wrap

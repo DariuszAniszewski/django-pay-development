@@ -48,3 +48,4 @@ class ErrorMessages():
     EMPTY_JSON_RESPONSE = "empty JSON"
     EMPTY_REQUEST_RESPONSE = "empty request"
     NOT_A_JSON_RESPONSE = "not a JSON"
+    NOT_AJAX_REQUEST = "not ajax request"

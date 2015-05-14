@@ -3,6 +3,7 @@ import json
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import TestCase
+
 from djangopay.helpers import ErrorMessages, PaymentStatus
 from djangopay.models import Product, PayuPayment
 
@@ -63,12 +64,6 @@ class DjangoPayTestCase(TestCase):
 
     def get_json_response_for_post_request(self, data):
         response = self.perform_json_post_request(data)
-        self.assertEqual(200, response.status_code)
-        response_dict = json.loads(response.content.decode("utf-8"))
-        return response_dict
-
-    def get_json_response_for_get_request(self):
-        response = self.client.get(self.url)
         self.assertEqual(200, response.status_code)
         response_dict = json.loads(response.content.decode("utf-8"))
         return response_dict
@@ -289,6 +284,9 @@ class TestPayuPaymentStatus(DjangoPayTestCase):
         self.url = reverse('django_pay_payu_status', args=["dummy_payment"])
         self.execute_get_ajax_request_and_expect_error(ErrorMessages.PAYMENT_NOT_FOUND)
 
+    def test_get_status_not_as_ajax(self):
+        self.execute_get_request_and_expect_error(ErrorMessages.NOT_AJAX_REQUEST)
+
     def test_get_status_of_existing_payment(self):
         for status in PaymentStatus.all():
             self.payment.status = status
@@ -296,3 +294,4 @@ class TestPayuPaymentStatus(DjangoPayTestCase):
             json_response = self.get_json_response_for_ajax_get_request()
             self.assertIn("status", json_response)
             self.assertEqual(status, json_response["status"])
+
