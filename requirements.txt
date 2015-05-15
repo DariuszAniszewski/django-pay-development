@@ -4,3 +4,4 @@ requests
 six
 dj_database_url
 psycopg2
+stripe

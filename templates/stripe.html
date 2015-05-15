@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <form action="{% url 'django_pay_stripe_start' %}" method="POST">
+        {% csrf_token %}
+        <script
+                src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                data-key="pk_test_H5o3yOCMtVTbdHHtRjY9Dflo"
+                data-amount="2000"
+                data-name="Demo Site"
+                data-description="2 widgets ($20.00)"
+                data-image="/128x128.png">
+        </script>
+    </form>
+{% endblock %}

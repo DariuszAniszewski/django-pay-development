@@ -11,6 +11,12 @@ def index(request):
     }
     return render(request, "index.html", data)
 
+def index_stripe(request):
+    data = {
+        "logged": request.user.is_authenticated(),
+        "products": Product.objects.all(),
+    }
+    return render(request, "stripe.html", data)
 
 def payment_completed(request):
     payment_id = request.session["payment_id"]
