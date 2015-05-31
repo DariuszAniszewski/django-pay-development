@@ -1,5 +1,5 @@
 from django import forms
-from django.forms.widgets import HiddenInput, TextInput, NumberInput
+from django.forms.widgets import HiddenInput, TextInput, NumberInput, Textarea
 
 
 class PayuPaymentForm(forms.Form):
@@ -11,3 +11,5 @@ class PayuPaymentForm(forms.Form):
     product_name = forms.CharField(widget=TextInput(attrs={"placeholder": ""}))
     product_unit_price = forms.IntegerField(widget=NumberInput(attrs={"placeholder": ""}))
     product_quantity = forms.IntegerField(widget=NumberInput(attrs={"placeholder": ""}))
+
+    purchase_description = forms.CharField(widget=Textarea(attrs={"rows": 3, "placeholder": "Describe your payment"}))

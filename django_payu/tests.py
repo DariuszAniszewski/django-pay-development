@@ -69,7 +69,7 @@ class TestNewPayment(TestCase):
         self.buyer = Buyer("first_name", "last_name", "email@server.com", "127.0.0.1")
 
     def test_payment_created(self):
-        payment_id, follow_url = DjangoPayU.create_payu_payment(self.buyer, self.product)
+        payment_id, follow_url = DjangoPayU.create_payu_payment(self.buyer, self.product, "payment description")
         self.assertIsNotNone(payment_id)
         self.assertIsNotNone(follow_url)
 
@@ -78,7 +78,7 @@ class TestGetPaymentStatus(TestCase):
     def setUp(self):
         self.product = Product("Test product", 100, 2)
         self.buyer = Buyer("first_name", "last_name", "email@server.com", "127.0.0.1")
-        self.payment_id, self.follow_url = DjangoPayU.create_payu_payment(self.buyer, self.product)
+        self.payment_id, self.follow_url = DjangoPayU.create_payu_payment(self.buyer, self.product, "test payment")
 
     def test_get_payment_status_for_started_payment(self):
         self.assertEqual(DjangoPayU.get_payment_status(self.payment_id), PaymentStatus.STATUS_STARTED)

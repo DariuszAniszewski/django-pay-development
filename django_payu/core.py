@@ -12,7 +12,7 @@ from django_payu.models import PayuPayment
 
 class DjangoPayU:
     @classmethod
-    def create_payu_payment(cls, buyer, product):
+    def create_payu_payment(cls, buyer, product, description):
 
         payment = PayuPayment()
 
@@ -20,6 +20,7 @@ class DjangoPayU:
         payment.buyer_last_name = buyer.last_name
         payment.buyer_email = buyer.email
         payment.buyer_ip_address = buyer.ip_address
+        payment.payment_description = description
 
         payment.product_name = product.name
         payment.product_unit_price = product.unit_price

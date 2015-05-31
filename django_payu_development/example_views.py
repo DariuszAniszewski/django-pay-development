@@ -18,7 +18,7 @@ def index(request):
             cd = form.cleaned_data
             buyer = Buyer(cd["buyer_first_name"], cd["buyer_last_name"], cd["buyer_email"], cd["buyer_ip_address"])
             product = Product(cd["product_name"], cd["product_unit_price"], cd["product_quantity"])
-            payment_id, follow = DjangoPayU.create_payu_payment(buyer, product)
+            payment_id, follow = DjangoPayU.create_payu_payment(buyer, product, cd["purchase_description"])
 
             return redirect(follow)
     else:

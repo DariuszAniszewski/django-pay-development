@@ -10,9 +10,6 @@ from django_payu.decorators import require_JSON
 from django_payu.helpers import ErrorMessages, BadParamValueException, PaymentStatus
 
 
-
-
-
 @csrf_exempt
 @require_POST
 @require_JSON

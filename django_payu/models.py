@@ -24,6 +24,7 @@ CURRENCIES = (
 class PayuPayment(models.Model):
     payment_id = models.CharField(max_length=64, primary_key=True, help_text=_("Will be auto-generated"))
     payment_status = models.CharField(max_length=16, choices=STATUSES)
+    payment_description = models.TextField(default="Your description")
     payu_id = models.CharField(max_length=128, blank=True, null=True)
     buyer_first_name = models.CharField(max_length=64)
     buyer_last_name = models.CharField(max_length=64)

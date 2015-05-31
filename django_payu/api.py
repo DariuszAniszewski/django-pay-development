@@ -39,7 +39,7 @@ class PayUApi:
             ),
             "customerIp": payu_payment.buyer_ip_address,
             "merchantPosId": self.POS_ID,
-            "description": "Your order description",
+            "description": payu_payment.payment_description,
             "currencyCode": "PLN",
             "totalAmount": payu_payment.total_price,
             "extOrderId": payu_payment.payment_id,
