@@ -20,32 +20,17 @@ CURRENCIES = (
 )
 
 
-class Product(models.Model):
-    uid = models.CharField(max_length=64, primary_key=True, help_text=_("Will be auto-generated"))
-    name = models.CharField(max_length=128)
-    price_net = models.IntegerField()
-    price_total = models.IntegerField()
-    vat_rate = models.FloatField(default=0.23)
-    pkwiu_code = models.CharField(blank=True, null=True, max_length=16)
-
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        if not self.uid:
-            self.uid = uuid4().hex
-        super(Product, self).save(force_insert, force_update, using, update_fields)
-
-    def __str__(self):
-        return u"{}".format(self.name)
-
-
 class Payment(models.Model):
     uid = models.CharField(max_length=64, primary_key=True, help_text=_("Will be auto-generated"))
     user = models.ForeignKey(User)
-    product = models.ForeignKey(Product)
+    name = models.CharField(max_length=128)
+    price = models.IntegerField()
     quantity = models.IntegerField(default=1)
     status = models.CharField(max_length=16, choices=STATUSES)
 
     creation_timestamp = models.DateTimeField(auto_now_add=True)
     modification_timestamp = models.DateTimeField(auto_now=True)
+    ip_address = models.GenericIPAddressField()
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if not self.uid:
@@ -54,11 +39,11 @@ class Payment(models.Model):
 
     @property
     def price_net(self):
-        return self.product.price_net * self.quantity
+        return self.price * self.quantity
 
     @property
     def price_total(self):
-        return self.product.price_total * self.quantity
+        return self.price * self.quantity
 
 
 class PayuPayment(Payment):

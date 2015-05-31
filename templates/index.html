@@ -18,7 +18,8 @@
         function getRequestBody() {
             return JSON.stringify({
                 "user_id": $("#user_id").val(),
-                "product_id": $("#product_id").val(),
+                "price": $("#price").val(),
+                "title": $("#title").val(),
                 "quantity": $("#quantity").val()
             });
         }
@@ -48,6 +49,10 @@
                     });
                     $("#status").html(html);
 
+                },
+                error: function (error) {
+                    $("#status").html(error.responseJSON.error);
+
                 }
             });
         }
@@ -71,12 +76,14 @@
         <input id="quantity" name="quantity" type="number" value="1"/>
         <br/>
         <br/>
-        <label for="product_id">Product id:</label>
-        <select id="product_id" name="product_id">
-            {% for product in products %}
-                <option value="{{ product.pk }}">{{ product.name }}</option>
-            {% endfor %}
-        </select>
+        <label for="price">Unit price:</label>
+        <input id="price" name="price" type="number" value="100"/>
+        <br/>
+        <br/>
+        <label for="title">Payment title:</label>
+        <input id="title" name="title" type="text" value="Payment Title"/>
+        <br/>
+        <br/>
         <br/>
         <br/>
 

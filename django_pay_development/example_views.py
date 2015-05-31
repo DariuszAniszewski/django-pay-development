@@ -1,5 +1,4 @@
 from django.shortcuts import render
-from djangopay.models import Product
 
 __author__ = 'dariusz'
 
@@ -7,7 +6,6 @@ __author__ = 'dariusz'
 def index(request):
     data = {
         "logged": request.user.is_authenticated(),
-        "products": Product.objects.all(),
     }
     return render(request, "index.html", data)
 

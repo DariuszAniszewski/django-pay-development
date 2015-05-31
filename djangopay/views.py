@@ -5,8 +5,9 @@ from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.http.response import JsonResponse
-from djangopay.PayUApi import PayUApi
-from djangopay.models import Product, PayuPayment
+
+from djangopay.core import DjangoPay
+from djangopay.models import PayuPayment
 from djangopay.decorators import require_JSON, require_AJAX
 from djangopay.helpers import ErrorMessages, NoParamException, BadParamValueException, PaymentStatus
 
@@ -18,50 +19,32 @@ def start_payment(request):
     json_str = request.body.decode('utf-8')
     data = json.loads(json_str)
 
-    user_id = data.get("user_id", None)
-    product_id = data.get("product_id", None)
-    quantity = data.get("quantity", None)
-    if quantity is not None:
-        quantity = int(quantity)
+    user_id = data.get("user_id")
+    quantity = data.get("quantity")
+    price = data.get("price")
+    title = data.get("title")
 
     if not user_id:
         raise NoParamException(ErrorMessages.USER_ID_NOT_FOUND)
-    if not product_id:
-        raise NoParamException(ErrorMessages.PRODUCT_ID_NOT_FOUND)
     if not quantity:
         raise NoParamException(ErrorMessages.QUANTITY_NOT_FOUND)
+    if not price:
+        raise NoParamException(ErrorMessages.PRICE_NOT_FOUND)
+    if not title:
+        raise NoParamException(ErrorMessages.TITLE_NOT_FOUND)
     try:
         User.objects.get(pk=user_id)
     except User.DoesNotExist:
         raise BadParamValueException(ErrorMessages.USER_NOT_FOUND)
 
-    try:
-        Product.objects.get(pk=product_id)
-    except Product.DoesNotExist:
-        raise BadParamValueException(ErrorMessages.PRODUCT_NOT_FOUND)
-
     user = User.objects.get(pk=user_id)
-    product = Product.objects.get(pk=product_id)
 
-    payment = PayuPayment()
-    payment.user = user
-    payment.quantity = quantity
-    payment.product = product
-    payment.save()
-
-    api = PayUApi()
-    response_code, response_data = api.make_order(request, payment)
-    response_dict = json.loads(response_data.decode('utf-8'))
-    payment.payu_id = response_dict["orderId"]
-    payment.status = "started"
-    payment.save()
-
-    follow = response_dict["redirectUri"]
+    new_payment = DjangoPay.create_payu_payment(title, price, quantity, user, request.META["REMOTE_ADDR"])
 
     response = {
-        "order_id": payment.uid,
-        "payu_id": payment.payu_id,
-        "follow": follow,
+        "order_id": new_payment.uid,
+        "payu_id": new_payment.payu_id,
+        "follow": new_payment.payu_url,
     }
     return JsonResponse(response)
 
@@ -69,10 +52,9 @@ def start_payment(request):
 @csrf_exempt
 @require_POST
 @require_JSON
-def test_view(request):
+def payu_notify(request):
     body = request.body
     data = json.loads(body.decode("utf-8"))
-
     if "order" not in data:
         raise BadParamValueException(ErrorMessages.BAD_JSON_STRUCTURE)
     order = data["order"]

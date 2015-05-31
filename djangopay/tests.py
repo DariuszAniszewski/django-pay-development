@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 
 from djangopay.helpers import ErrorMessages, PaymentStatus
-from djangopay.models import Product, PayuPayment
+from djangopay.models import PayuPayment
 
 
 class DjangoPayTestCase(TestCase):
@@ -44,22 +44,15 @@ class DjangoPayTestCase(TestCase):
     def create_user(self):
         self.user = User.objects.create()
 
-    def create_product(self):
-        self.product = Product.objects.create(
-            name="Test Product",
-            price_net=1000,
-            price_total=1230,
-            vat_rate=0.23,
-        )
-
     def create_payment(self):
         self.create_user()
-        self.create_product()
         self.payment = PayuPayment()
         self.payment.payu_id = "payu-id"
         self.payment.user = self.user
-        self.payment.product = self.product
+        self.payment.name = "Test product"
+        self.payment.price = 1000
         self.payment.quantity = 1
+        self.payment.ip_address = "127.0.0.1"
         self.payment.save()
 
     def get_json_response_for_post_request(self, data):
@@ -102,14 +95,6 @@ class TestCreateNewPayuPayment(DjangoPayTestCase, CommonPostTests):
             ErrorMessages.USER_ID_NOT_FOUND
         )
 
-    def test_with_no_product_id(self):
-        self.execute_post_request_and_expect_error(
-            json.dumps({
-                "user_id": 1,
-            }),
-            ErrorMessages.PRODUCT_ID_NOT_FOUND
-        )
-
     def test_with_no_quantity(self):
         self.execute_post_request_and_expect_error(
             json.dumps({
@@ -125,28 +110,57 @@ class TestCreateNewPayuPayment(DjangoPayTestCase, CommonPostTests):
                 "user_id": -1,
                 "product_id": 1,
                 "quantity": 1,
+                "title": "Product name",
+                "price": 100,
             }),
             ErrorMessages.USER_NOT_FOUND
         )
 
-    def test_with_bad_product_id(self):
+    def test_with_no_price(self):
         self.create_user()
-        self.execute_post_request_and_expect_error(
-            json.dumps({
-                "user_id": 1,
-                "quantity": 1,
-                "product_id": -1,
-            }),
-            ErrorMessages.PRODUCT_NOT_FOUND
-        )
+
+        self.execute_post_request_and_expect_error(json.dumps({
+            "user_id": self.user.pk,
+            "quantity": 1,
+            "title": "Product name",
+        }), ErrorMessages.PRICE_NOT_FOUND)
+
+    def test_with_no_title(self):
+        self.create_user()
+
+        self.execute_post_request_and_expect_error(json.dumps({
+            "user_id": self.user.pk,
+            "quantity": 1,
+            "price": 1,
+        }), ErrorMessages.TITLE_NOT_FOUND)
+
+    def test_with_wrong_price(self):
+        self.create_user()
+
+        self.execute_post_request_and_expect_error(json.dumps({
+            "user_id": self.user.pk,
+            "quantity": 1,
+            "price": "not_an_int",
+            "title": "Product name",
+        }), ErrorMessages.PRICE_MALFORMED)
+
+    def test_with_wrong_quantity(self):
+        self.create_user()
+
+        self.execute_post_request_and_expect_error(json.dumps({
+            "user_id": self.user.pk,
+            "quantity": "not_an_int",
+            "title": "Product name",
+            "price": 100,
+        }), ErrorMessages.QUANTITY_MALFORMED)
 
     def test_payment_created(self):
         self.create_user()
-        self.create_product()
 
         response_dict = self.get_json_response_for_post_request(json.dumps({
             "user_id": self.user.pk,
-            "product_id": self.product.pk,
+            "price": 100,
+            "title": "Product name",
             "quantity": 1,
         }))
         self.assertIn("payu_id", response_dict)

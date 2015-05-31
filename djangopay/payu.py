@@ -8,19 +8,26 @@ import requests
 import six
 
 
-class PayUApi():
+class PayUApi:
     __BASE_URL = "https://secure.payu.com"
     __ORDER_URL = urllib.parse.urljoin(__BASE_URL, "api/v2_1/orders")
 
-    @staticmethod
-    def __get_signature():
-        sig = "{}:{}".format(settings.DJANGO_PAY_PAYU_POS_ID, settings.DJANGO_PAY_PAYU_POS_AUTHORIZATION_KEY)
+    POS_ID = None
+    POS_AUTHORIZATION_KEY = None
+
+    def __init__(self, pos_id, pos_authorization_key):
+        super().__init__()
+        self.POS_ID = pos_id
+        self.POS_AUTHORIZATION_KEY = pos_authorization_key
+
+    def __get_signature(self):
+        sig = "{}:{}".format(self.POS_ID, self.POS_AUTHORIZATION_KEY)
         sig = base64.encodebytes(six.b(sig))
         sig = b"Basic " + sig
         sig = sig.strip()
         return sig
 
-    def make_order(self, request, payu_payment):
+    def make_order(self, payu_payment):
         url = self.__ORDER_URL
         data = {
             "notifyUrl": "{}{}".format(
@@ -31,8 +38,8 @@ class PayUApi():
                 settings.BASE_URL,
                 reverse('django_pay_payu_continue', args=[payu_payment.uid])
             ),
-            "customerIp": request.META.get("REMOTE_ADDR"),
-            "merchantPosId": settings.DJANGO_PAY_PAYU_POS_ID,
+            "customerIp": payu_payment.ip_address,
+            "merchantPosId": self.POS_ID,
             "description": "Your order description",
             "currencyCode": "PLN",
             "totalAmount": payu_payment.price_total,
@@ -44,8 +51,8 @@ class PayUApi():
             },
             "products": [
                 {
-                    "name": payu_payment.product.name,
-                    "unitPrice": payu_payment.product.price_total,
+                    "name": payu_payment.name,
+                    "unitPrice": payu_payment.price,
                     "quantity": payu_payment.quantity,
                 }
             ]
