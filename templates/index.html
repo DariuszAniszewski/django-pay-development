@@ -1,99 +1,14 @@
 {% extends "base.html" %}
-
-{% block handlebars_templates %}
-    {% verbatim %}
-
-    <script id="some-template" type="text/x-handlebars-template">
-        <h3>OrderId: {{ order_id }}</h3>
-
-        <h3>PayU OrderId: {{ payu_id }}</h3>
-
-        <h3>Click <a href="{{ follow }}">here</a> to pay!</h3>
-    </script>
-    {% endverbatim %}
-{% endblock %}
-
-{% block scripts %}
-    <script>
-        function getRequestBody() {
-            return JSON.stringify({
-                "user_id": $("#user_id").val(),
-                "price": $("#price").val(),
-                "title": $("#title").val(),
-                "quantity": $("#quantity").val()
-            });
-        }
-
-        function start_purchase() {
-            var url = "{% url "django_pay_payu_start" %}";
-            var body = getRequestBody();
-            $.ajax({
-                url: url,
-                type: 'post',
-                dataType: 'json',
-                data: body,
-                success: function (data) {
-                    console.log(data.order_id);
-                    console.log(data.payu_id);
-                    console.log(data.follow);
-                    var order_id = data.order_id;
-                    var payu_id = data.payu_id;
-                    var follow = data.follow;
-                    var source = $("#some-template").html();
-                    console.log(source);
-                    var template = Handlebars.compile(source);
-                    var html = template({
-                        order_id: order_id,
-                        payu_id: payu_id,
-                        follow: follow
-                    });
-                    $("#status").html(html);
-
-                },
-                error: function (error) {
-                    $("#status").html(error.responseJSON.error);
-
-                }
-            });
-        }
-
-        $().ready(function () {
-            $("#submit").click(function () {
-                start_purchase();
-            });
-        });
-    </script>
-{% endblock %}
+{% load bootstrap3 %}
 
 
 {% block body %}
-    {% if logged %}
-        <label for="user_id">User id:</label>
-        <input id="user_id" name="user_id" type="text" value="{{ user.pk }}"/>
-        <br/>
-        <br/>
-        <label for="quantity">Quantity id:</label>
-        <input id="quantity" name="quantity" type="number" value="1"/>
-        <br/>
-        <br/>
-        <label for="price">Unit price:</label>
-        <input id="price" name="price" type="number" value="100"/>
-        <br/>
-        <br/>
-        <label for="title">Payment title:</label>
-        <input id="title" name="title" type="text" value="Payment Title"/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
+    <div class="col-md-6 col-md-offset-3">
+        <form action="{% url 'index' %}" method="POST">
+            {% csrf_token %}
+            {% bootstrap_form form %}
 
-
-        <button id="submit" type="submit">SUBMIT</button>
-
-        <div id="status">
-
-        </div>
-    {% else %}
-        Need to log in
-    {% endif %}
+            <button id="submit" type="submit">SUBMIT</button>
+        </form>
+    </div>
 {% endblock %}

@@ -3,7 +3,7 @@
 {% block scripts %}
     <script>
         function checkStatus() {
-            var url = "{% url "django_pay_payu_status" payment_id %}";
+            var url = "{% url "get_status" payment_id %}";
             $.getJSON(url, function (data) {
                 console.log(data);
                 $("#status").html(data.status);

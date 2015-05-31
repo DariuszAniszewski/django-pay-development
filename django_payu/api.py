@@ -28,7 +28,6 @@ class PayUApi:
         return sig
 
     def make_order(self, payu_payment):
-        url = self.__ORDER_URL
         data = {
             "notifyUrl": "{}{}".format(
                 settings.BASE_URL,
@@ -36,24 +35,24 @@ class PayUApi:
             ),
             "continueUrl": "{}{}".format(
                 settings.BASE_URL,
-                reverse('django_pay_payu_continue', args=[payu_payment.uid])
+                reverse('django_pay_payu_continue', args=[payu_payment.payment_id])
             ),
-            "customerIp": payu_payment.ip_address,
+            "customerIp": payu_payment.buyer_ip_address,
             "merchantPosId": self.POS_ID,
             "description": "Your order description",
             "currencyCode": "PLN",
-            "totalAmount": payu_payment.price_total,
-            "extOrderId": payu_payment.uid,
+            "totalAmount": payu_payment.total_price,
+            "extOrderId": payu_payment.payment_id,
             "buyer": {
-                "email": payu_payment.user.email,
-                "firstName": payu_payment.user.first_name,
-                "lastName": payu_payment.user.last_name,
+                "email": payu_payment.buyer_email,
+                "firstName": payu_payment.buyer_first_name,
+                "lastName": payu_payment.buyer_last_name,
             },
             "products": [
                 {
-                    "name": payu_payment.name,
-                    "unitPrice": payu_payment.price,
-                    "quantity": payu_payment.quantity,
+                    "name": payu_payment.product_name,
+                    "unitPrice": payu_payment.product_unit_price,
+                    "quantity": payu_payment.product_quantity,
                 }
             ]
         }
@@ -62,5 +61,5 @@ class PayUApi:
             "Authorization": self.__get_signature(),
             "Content-Type": "application/json",
         }
-        response = requests.post(url, data=json.dumps(data), headers=headers, allow_redirects=False)
+        response = requests.post(self.__ORDER_URL, data=json.dumps(data), headers=headers, allow_redirects=False)
         return response.status_code, response.content
