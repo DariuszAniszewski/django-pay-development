@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from djangopay import views
+from django_payu import views
 
 urlpatterns = [
     url(r'^payu/start$', views.start_payment, name='django_pay_payu_start'),

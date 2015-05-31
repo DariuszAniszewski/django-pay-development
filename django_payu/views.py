@@ -6,10 +6,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.http.response import JsonResponse
 
-from djangopay.core import DjangoPay
-from djangopay.models import PayuPayment
-from djangopay.decorators import require_JSON, require_AJAX
-from djangopay.helpers import ErrorMessages, NoParamException, BadParamValueException, PaymentStatus
+from django_payu.core import DjangoPay
+from django_payu.models import PayuPayment
+from django_payu.decorators import require_JSON, require_AJAX
+from django_payu.helpers import ErrorMessages, NoParamException, BadParamValueException, PaymentStatus
 
 
 @csrf_exempt

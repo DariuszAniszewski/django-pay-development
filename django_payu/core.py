@@ -2,10 +2,10 @@ import json
 
 from django.conf import settings
 
-from djangopay.helpers import DjangoPayException, ErrorMessages
+from django_payu.helpers import DjangoPayException, ErrorMessages
 
-from djangopay.payu import PayUApi
-from djangopay.models import PayuPayment
+from django_payu.payu import PayUApi
+from django_payu.models import PayuPayment
 
 
 class NewPayUPurchase:
@@ -33,7 +33,7 @@ class DjangoPay:
         payment.ip_address = ip_address
         payment.save()
 
-        api = PayUApi(settings.DJANGO_PAY_PAYU_POS_ID, settings.DJANGO_PAY_PAYU_POS_AUTHORIZATION_KEY)
+        api = PayUApi(settings.DJANGO_PAYU_POS_ID, settings.DJANGO_PAYU_POS_AUTHORIZATION_KEY)
         response_code, response_data = api.make_order(payment)
         response_dict = json.loads(response_data.decode('utf-8'))
         payment.payu_id = response_dict["orderId"]

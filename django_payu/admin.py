@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from djangopay.models import PayuPayment
+from django_payu.models import PayuPayment
 
 
 class PayuPaymentAdmin(admin.ModelAdmin):

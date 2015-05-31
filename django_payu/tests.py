@@ -4,8 +4,8 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
-from djangopay.helpers import ErrorMessages, PaymentStatus
-from djangopay.models import PayuPayment
+from django_payu.helpers import ErrorMessages, PaymentStatus
+from django_payu.models import PayuPayment
 
 
 class DjangoPayTestCase(TestCase):
