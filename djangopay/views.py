@@ -59,10 +59,6 @@ def payu_notify(request):
         raise BadParamValueException(ErrorMessages.BAD_JSON_STRUCTURE)
     order = data["order"]
 
-    print("========")
-    print(body)
-    print("========")
-
     if "orderId" not in order:
         raise BadParamValueException(ErrorMessages.ORDER_ID_NOT_FOUND)
     if "extOrderId" not in order:
