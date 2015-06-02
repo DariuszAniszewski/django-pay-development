@@ -1,4 +1,5 @@
 import json
+from django.core.urlresolvers import reverse
 
 from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_exempt
@@ -48,10 +49,3 @@ def payu_notify(request):
             payment.payment_status = PaymentStatus.STATUS_STARTED
     payment.save()
     return JsonResponse({})
-
-
-def payu_continue(request, payment_id):
-    request.session["payment_id"] = payment_id
-    return redirect('django_pay_complete')
-
-

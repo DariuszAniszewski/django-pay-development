@@ -1,9 +1,10 @@
-from django.shortcuts import render, redirect
+from django.conf import settings
+from django.core.urlresolvers import reverse
 
+from django.shortcuts import render, redirect
 from django.http.response import JsonResponse, HttpResponseBadRequest
 
 from django_payu.core import DjangoPayU, Buyer, Product
-
 from django_payu.forms import PayuPaymentForm
 from django_payu.helpers import DjangoPayException
 
@@ -18,12 +19,19 @@ def index(request):
             cd = form.cleaned_data
             buyer = Buyer(cd["buyer_first_name"], cd["buyer_last_name"], cd["buyer_email"], cd["buyer_ip_address"])
             product = Product(cd["product_name"], cd["product_unit_price"], cd["product_quantity"])
-            payment_id, follow = DjangoPayU.create_payu_payment(buyer, product, cd["purchase_description"])
+            description = cd["purchase_description"]
+            continue_url = cd["continue_url"]
+            payment_id, follow = DjangoPayU.create_payu_payment(buyer, product, description, continue_url)
+            request.session["payment_id"] = payment_id
 
             return redirect(follow)
     else:
         form = PayuPaymentForm(initial={
             "buyer_ip_address": request.META["REMOTE_ADDR"],
+            "continue_url": "{}{}".format(
+                settings.BASE_URL,
+                reverse("payment_flow_done"),
+            )
         })
     data = {
         "form": form,
