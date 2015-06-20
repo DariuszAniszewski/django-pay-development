@@ -107,4 +107,4 @@ BASE_URL = os.environ.get("BASE_URL", "http://localhost:8000")
 DJANGO_PAYU_BASE_URL = BASE_URL
 DJANGO_PAYU_POS_ID = "145227"
 DJANGO_PAYU_POS_AUTHORIZATION_KEY = "13a980d4f851f3d9a1cfc792fb1f5e50"
-
+DJANGO_PAYU_LOG_FILE = os.path.join(BASE_DIR, "django_payu.log")
